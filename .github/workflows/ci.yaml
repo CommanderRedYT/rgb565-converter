@@ -29,7 +29,7 @@ jobs:
         run: |
           sudo apt update -y
           sudo apt install -y imagemagick
-          python${{ matrix.python-version }} -m pip install rgb565-converter
+          python${{ matrix.python-version }} -m pip install -e ./
       
       - name: Prepare Tests
         run: |
@@ -37,10 +37,8 @@ jobs:
           ls -lah 
           cp -r tests/* /tmp/tests
           cd /tmp/tests
-          mkdir -p /tmp/tests/output
       
       - name: Perform Tests
         run: |
-          rgb565-converter -i /tmp/tests/input/info.png -o /tmp/tests/output/info.cpp
-          rgb565-converter -i /tmp/tests/output/info.cpp -o /tmp/tests/output/info.png
-          diff /tmp/tests/input/info.png /tmp/tests/output/info.png
+          rgb565-converter -i /tmp/tests/input_info.png -o /tmp/tests/info.cpp
+          diff /tmp/tests/input_info.png /tmp/tests/info.png
