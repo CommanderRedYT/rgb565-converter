@@ -13,21 +13,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [ "python3.6", "python3.7", "python3.8", "python3.9", "python3.10" ]
+        python-version: ['3.6', '3.7.4', '3.8', '3.9', '3.10']
     name: Build for ${{ matrix.node }}
     steps:
 
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Add ppa
-        run: |
-          sudo add-apt-repository -y ppa:deadsnakes/ppa
+      - name: Install Python-${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Dependencies
         run: |
           sudo apt update -y
-          sudo apt install -y --reinstall ${{ matrix.node }} python3-pip python3-distutils imagemagick
+          sudo apt install -y imagemagick
           ${{ matrix.node }} -m pip install rgb565-converter
       
       - name: Check Installation
