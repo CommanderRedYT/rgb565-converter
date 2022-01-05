@@ -42,6 +42,5 @@ jobs:
       - name: Perform Tests
         run: |
           rgb565-converter -i /tmp/tests/input/info.png -o /tmp/tests/output/info.cpp
-          rgb565-converter -i /tmp/tests/input/info.cpp -o /tmp/tests/output/info.png
-          cat /tmp/tests/input/info.cpp
-          cat /tmp/tests/output/info.cpp
+          rgb565-converter -i /tmp/tests/output/info.cpp -o /tmp/tests/output/info.png
+          diff /tmp/tests/input/info.png /tmp/tests/output/info.png
