@@ -20,9 +20,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Install Dependencies
+      - name: Add ppa for older python versions
+        if: '{{ matrix.node | contains("python3.6") }}'
         run: |
           sudo add-apt-repository -y ppa:deadsnakes/ppa
+
+      - name: Install Dependencies
+        run: |
           sudo apt update -y
           sudo apt install -y --reinstall ${{ matrix.node }} python3-pip python3-distutils imagemagick
           ${{ matrix.node }} -m pip install rgb565-converter
