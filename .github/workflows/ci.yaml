@@ -1,0 +1,32 @@
+# Checkout repo and run tests for python versions >= 3.6
+name: CI
+on:
+  push:
+  release:
+    types:
+      - release
+  pull_request:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [ "python3.6", "python3.7", "python3.8", "python3.9", "python3.10" ]
+    name: Build for ${{ matrix.node }}
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          add-apt-repository -y ppa:deadsnakes/ppa
+          apt update -y
+          apt install -y imagemagick ${{ matrix.node }}
+          ${{ matrix.node }} -m pip install rgb565-converter
+      
+      - name: Check Installation
+        run: |
+          ${{ matrix.node }} -m rgb565-converter --help
