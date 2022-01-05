@@ -14,13 +14,13 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.6', '3.7.4', '3.8', '3.9', '3.10']
-    name: Build for ${{ matrix.node }}
+    name: Build for python-${{ matrix.python-version }}
     steps:
 
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Install Python-${{ matrix.python-version }}
+      - name: Install python-${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
