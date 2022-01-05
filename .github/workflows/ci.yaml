@@ -1,0 +1,43 @@
+# Checkout repo and run tests for python versions >= 3.6
+name: CI
+on:
+  push:
+  release:
+    types:
+      - release
+  pull_request:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10']
+    name: python-${{ matrix.python-version }}
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install python-${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Package
+        run: |
+          python${{ matrix.python-version }} -m pip install -e ./
+      
+      - name: Prepare Tests
+        run: |
+          mkdir -p /tmp/tests
+          ls -lah 
+          cp -r tests/* /tmp/tests
+          cd /tmp/tests
+      
+      - name: Perform Tests
+        run: |
+          rgb565-converter -i /tmp/tests/input_info.png -o /tmp/tests/info.cpp
+          rgb565-converter -i /tmp/tests/info.cpp -o /tmp/tests/output_info.png
+          diff /tmp/tests/input_info.png /tmp/tests/output_info.png
