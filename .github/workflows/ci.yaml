@@ -31,7 +31,13 @@ jobs:
           sudo apt install -y imagemagick
           python${{ matrix.python-version }} -m pip install rgb565-converter
       
-      - name: Check Installation
+      - name: Prepare Tests
         run: |
-          python3 --version
-          rgb565-converter --help
+          mkdir -p /tmp/tests
+          cp -r tests/* /tmp/tests
+          cd /tmp/tests
+          mkdir -p /tmp/tests/output
+          rgb565-converter -i /tmp/tests/input/info.png -o /tmp/tests/output/info.cpp
+          rgb565-converter -i /tmp/tests/input/info.cpp -o /tmp/tests/output/info.png
+          cat /tmp/tests/input/info.cpp
+          cat /tmp/tests/output/info.cpp
