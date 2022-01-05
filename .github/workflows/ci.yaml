@@ -42,4 +42,3 @@ jobs:
         run: |
           rgb565-converter -i /tmp/tests/input_info.png -o /tmp/tests/info.cpp
           rgb565-converter -i /tmp/tests/info.cpp -o /tmp/tests/output_info.png
-          diff /tmp/tests/input_info.png /tmp/tests/output_info.png
