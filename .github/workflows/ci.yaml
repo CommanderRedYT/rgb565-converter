@@ -13,8 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10.0']
-    name: Build for python-${{ matrix.python-version }}
+        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10']
+    name: python-${{ matrix.python-version }}
     steps:
 
       - name: Checkout Repository
