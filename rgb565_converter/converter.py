@@ -3,9 +3,7 @@ import argparse
 import os
 import tempfile
 from PIL import Image
-import struct
-
-from enum import Enum, auto
+from enum import Enum
 
 class Mode(Enum):
     CPP = ".cpp"
