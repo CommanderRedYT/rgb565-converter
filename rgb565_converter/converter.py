@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import argparse
 import os
-import tempfile
 from PIL import Image
 from enum import Enum
 
@@ -37,6 +36,10 @@ def main():
         args.output_file = input_basename[0] + mode.value
 
     output_basename = os.path.basename(args.output_file).rsplit('.', 1)
+
+    if len(output_basename) != 2:
+        print("Error: Invalid arguments.")
+        exit(1)
 
     if (input_basename[1] not in ['png', 'cpp']):
         print("Error: Input file must be a .png or .cpp file.")
@@ -105,21 +108,25 @@ const espgui::Icon<{width}, {height}> {name}{{{{
 
 def convert_rgb565_to_png(args):
     with open(args.input_file, 'r') as input_file:
-        with tempfile.NamedTemporaryFile(mode='wb', suffix='.rgb565') as tmp_file:
-            tmp = input_file.read()
-            icon_size = tmp.split('espgui::Icon<')[1].split('>')[0].replace(', ', ',').split(',')
-            tmp = tmp.split('{{')[1].split('}')[0].split('\n')
-            input_content = ""
-            for line in tmp:
-                input_content += line.split('//')[0].strip()
-            input_content = input_content[0:-1].replace(', ', ',').split(',')
+        tmp = input_file.read()
+        icon_size = tmp.split('espgui::Icon<')[1].split('>')[0].replace(', ', ',').split(',')
+        tmp = tmp.split('{{')[1].split('}')[0].split('\n')
+        input_content = ""
+        for line in tmp:
+            input_content += line.split('//')[0].strip()
+        input_content = input_content[0:-1].replace(', ', ',').split(',')
 
-            for word in input_content:
-                tmp_file.write(int(word, 16).to_bytes(2, 'little'))
+        width = int(icon_size[0])
+        height = int(icon_size[1])
+        png = Image.new('RGB', (width, height))
 
-            tmp_file.flush()
+        for i, word in enumerate(input_content):
+            r = (int(word, 16) >> 11) & 0x1F
+            g = (int(word, 16) >> 5) & 0x3F
+            b = (int(word, 16)) & 0x1F
+            png.putpixel((i % width, i // width), (r << 3, g << 2, b << 3))
 
-            os.system(f'convert -size {icon_size[0]}x{icon_size[1]} {tmp_file.name} {args.output_file}')
+        png.save(args.output_file)
 
 if __name__ == '__main__':
     main()
