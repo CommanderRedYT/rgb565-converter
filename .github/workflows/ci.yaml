@@ -25,10 +25,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Dependencies
+      - name: Install Package
         run: |
-          sudo apt update -y
-          sudo apt install -y imagemagick
           python${{ matrix.python-version }} -m pip install -e ./
       
       - name: Prepare Tests
