@@ -20,8 +20,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Add ppa for older python versions
-        if: ${{ matrix.node == 'python3.6' || matrix.node == 'python3.10' }}
+      - name: Add ppa
         run: |
           sudo add-apt-repository -y ppa:deadsnakes/ppa
 
