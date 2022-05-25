@@ -95,7 +95,7 @@ extern const espgui::Icon<{width}, {height}> {name};
 namespace bobbyicons {{
 const espgui::Icon<{width}, {height}> {name}{{{{
     {image_content}
-}}, "{name}"}}
+}}, "{name}"}};
 }} // namespace bobbyicons
     """.strip() + "\n"
 
