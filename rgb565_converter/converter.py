@@ -84,19 +84,19 @@ def convert_png_to_rgb565(args):
 
 #include "icon.h"
 
-namespace bobbyicons {{
+namespace icons {{
 extern const espgui::Icon<{width}, {height}> {name};
-}} // namespace bobbyicons
+}} // namespace icons
     """.strip() + "\n"
 
     output_cpp_content = f"""
 #include "{name}.h"
 
-namespace bobbyicons {{
+namespace icons {{
 const espgui::Icon<{width}, {height}> {name}{{{{
     {image_content}
 }}, "{name}"}};
-}} // namespace bobbyicons
+}} // namespace icons
     """.strip() + "\n"
 
     with open(args.output_file, 'w') as output_file:
