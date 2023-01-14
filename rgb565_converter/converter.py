@@ -82,7 +82,8 @@ def convert_png_to_rgb565(args):
     output_h_content = f"""
 #pragma once
 
-#include "icon.h"
+// 3rdparty lib includes
+#include <icon.h>
 
 namespace icons {{
 extern const espgui::Icon<{width}, {height}> {name};
