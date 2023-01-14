@@ -26,6 +26,12 @@ def main():
         dest="output_file",
         help="Output file to be converted."
     )
+    parser.add_argument(
+        "-s",
+        "--swap",
+        dest="swap",
+        help="Swap bytes for 16-bit words."
+    )
     args = parser.parse_args()
 
     input_basename = os.path.basename(args.input_file).rsplit('.', 1)
@@ -74,6 +80,10 @@ def convert_png_to_rgb565(args):
         g = (pixel[1] >> 2) & 0x3F
         b = (pixel[2] >> 3) & 0x1F
         rgb = r << 11 | g << 5 | b
+
+        if args.swap:
+            rgb = ((rgb & 0xFF) << 8) | ((rgb & 0xFF00) >> 8)
+        
         image_content += f"0x{rgb:04X}" + (",\n    " if (i % max_line_width == max_line_width-1) else ",")
 
     if image_content.endswith("\n    "):
