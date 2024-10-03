@@ -12,6 +12,16 @@ def hex2rgb(value: str) -> Tuple[int, int, int]:
     value = value.lstrip('#')
     return tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
 
+def color565(r: int, g: int, b: int):
+    return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
+
+def color565alpha(r: int, g: int, b: int, a: int, background_color):
+    return color565(
+        int(r * a + ((1-a)*background_color[0])),
+        int(g * a + ((1-a)*background_color[1])),
+        int(b * a + ((1-a)*background_color[2]))
+    )
+
 class Mode(Enum):
     CPP = ".cpp"
     PNG = ".png"
@@ -150,21 +160,23 @@ def convert_png_to_rgb565(input_file: str, output_file: str, swap: bool, namespa
 
     max_line_width = min(width, 64)
 
+    background_color = hex2rgb(background) if background is not None else (0, 0, 0)
+
     image_content = ""
     for y in range(height):
         for x in range(width):
             pixel = png.getpixel((x, y))
-            if background is not None and pixel[3] == 0:
-                pixel = hex2rgb(background)
-            r = (pixel[0] >> 3) & 0x1F
-            g = (pixel[1] >> 2) & 0x3F
-            b = (pixel[2] >> 3) & 0x1F
-            rgb = r << 11 | g << 5 | b
+
+            alpha = pixel[3] if len(pixel) == 4 else 255
+
+            color = color565alpha(int(pixel[0]), int(pixel[1]), int(pixel[2]), alpha / 255, background_color)
 
             if swap:
-                rgb = ((rgb & 0xFF) << 8) | ((rgb & 0xFF00) >> 8)
-            
-            image_content += f"0x{rgb:04x}" + (",\n    " if (x % max_line_width == max_line_width-1) else ", ")
+                color = ((color & 0xFF) << 8) | ((color & 0xFF00) >> 8)
+
+            image_content += f"0x{color:04x}" + (",\n    " if (x % max_line_width == max_line_width-1) else ", ")
+
+
 
     if image_content.endswith("\n    "):
         image_content = image_content[:-5]
