@@ -2,8 +2,15 @@
 
 import argparse
 import os
+from typing import Tuple
+
 from PIL import Image
 from enum import Enum
+
+def hex2rgb(value: str) -> Tuple[int, int, int]:
+    # value is "#5c5c5c" for example
+    value = value.lstrip('#')
+    return tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
 
 class Mode(Enum):
     CPP = ".cpp"
@@ -52,7 +59,9 @@ def main():
         "-s",
         "--swap",
         dest="swap",
-        help="Swap bytes for 16-bit words."
+        help="Swap bytes for 16-bit words.",
+        default=False,
+        type=bool
     )
     parser.add_argument(
         "-n",
@@ -73,6 +82,13 @@ def main():
         "--h-template-file",
         dest="h_template_file",
         help="Header template file for output files.",
+        default=None,
+        type=str
+    )
+    parser.add_argument(
+        "--background",
+        dest="background",
+        help="Replace transparency with a background color.",
         default=None,
         type=str
     )
@@ -126,28 +142,30 @@ def main():
     if mode == Mode.PNG:
         convert_rgb565_to_png(args.input_file, args.output_file, args.swap)
     else:
-        convert_png_to_rgb565(args.input_file, args.output_file, args.swap, args.namespace, cpp_template, h_template)
+        convert_png_to_rgb565(args.input_file, args.output_file, args.swap, args.namespace, args.background, cpp_template, h_template)
 
-def convert_png_to_rgb565(input_file: str, output_file: str, swap: bool, namespace: str, cpp_template: str = DEFAULT_CPP_TEMPLATE, h_template: str = DEFAULT_H_TEMPLATE):
+def convert_png_to_rgb565(input_file: str, output_file: str, swap: bool, namespace: str, background: str | None, cpp_template: str = DEFAULT_CPP_TEMPLATE, h_template: str = DEFAULT_H_TEMPLATE):
     name = os.path.basename(output_file).rsplit('.', 1)[0]
     png = Image.open(input_file)
     width, height = png.size
 
     max_line_width = min(width, 64)
 
-    # iterate over the pixels
-    image = png.getdata()
     image_content = ""
-    for i, pixel in enumerate(image):
-        r = (pixel[0] >> 3) & 0x1F
-        g = (pixel[1] >> 2) & 0x3F
-        b = (pixel[2] >> 3) & 0x1F
-        rgb = r << 11 | g << 5 | b
+    for y in range(height):
+        for x in range(width):
+            pixel = png.getpixel((x, y))
+            if background is not None and pixel[3] == 0:
+                pixel = hex2rgb(background)
+            r = (pixel[0] >> 3) & 0x1F
+            g = (pixel[1] >> 2) & 0x3F
+            b = (pixel[2] >> 3) & 0x1F
+            rgb = r << 11 | g << 5 | b
 
-        if swap:
-            rgb = ((rgb & 0xFF) << 8) | ((rgb & 0xFF00) >> 8)
-        
-        image_content += f"0x{rgb:04X}" + (",\n    " if (i % max_line_width == max_line_width-1) else ",")
+            if swap:
+                rgb = ((rgb & 0xFF) << 8) | ((rgb & 0xFF00) >> 8)
+            
+            image_content += f"0x{rgb:04X}" + (",\n    " if (x % max_line_width == max_line_width-1) else ",")
 
     if image_content.endswith("\n    "):
         image_content = image_content[:-5]
