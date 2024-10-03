@@ -144,7 +144,7 @@ def main():
     else:
         convert_png_to_rgb565(args.input_file, args.output_file, args.swap, args.namespace, args.background, cpp_template, h_template)
 
-def convert_png_to_rgb565(input_file: str, output_file: str, swap: bool, namespace: str, background: str | None, cpp_template: str = DEFAULT_CPP_TEMPLATE, h_template: str = DEFAULT_H_TEMPLATE):
+def convert_png_to_rgb565(input_file: str, output_file: str, swap: bool, namespace: str, background: str or None, cpp_template: str = DEFAULT_CPP_TEMPLATE, h_template: str = DEFAULT_H_TEMPLATE):
     name = os.path.basename(output_file).rsplit('.', 1)[0]
     png = Image.open(input_file)
     width, height = png.size
