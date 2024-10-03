@@ -1,0 +1,12 @@
+#pragma once
+
+// 3rdparty lib includes
+#include <icon.h>
+
+#ifdef TEST
+
+namespace {namespace} {{
+extern const espgui::Icon<{width}, {height}> {name};
+}} // namespace {namespace}
+
+#endif

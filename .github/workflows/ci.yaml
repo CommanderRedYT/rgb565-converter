@@ -3,25 +3,24 @@ name: CI
 on:
   push:
   release:
-    types:
-      - release
+    types: [released]
   pull_request:
 
 jobs:
-  Build:
+  DeprecatedTests:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12']
     name: python-${{ matrix.python-version }}
     steps:
 
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install python-${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -36,8 +35,34 @@ jobs:
           cp -r tests/* /tmp/tests
           cd /tmp/tests
       
-      - name: Perform Tests
+      - name: Perform deprecated tests
         run: |
           rgb565-converter -i /tmp/tests/input_info.png -o /tmp/tests/info.cpp
           rgb565-converter -i /tmp/tests/info.cpp -o /tmp/tests/output_info.png
           diff /tmp/tests/input_info.png /tmp/tests/output_info.png
+
+  Test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12']
+    name: python-${{ matrix.python-version }}
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install python-${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Package
+        run: |
+          python${{ matrix.python-version }} -m pip install -e ./
+
+      # unittest
+      - name: Run unittest
+        run: |
+          python${{ matrix.python-version }} -m unittest discover -s tests -v
