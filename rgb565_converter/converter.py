@@ -60,8 +60,7 @@ def main():
         "--swap",
         dest="swap",
         help="Swap bytes for 16-bit words.",
-        default=False,
-        type=bool
+        action="store_true"
     )
     parser.add_argument(
         "-n",
@@ -165,7 +164,7 @@ def convert_png_to_rgb565(input_file: str, output_file: str, swap: bool, namespa
             if swap:
                 rgb = ((rgb & 0xFF) << 8) | ((rgb & 0xFF00) >> 8)
             
-            image_content += f"0x{rgb:04X}" + (",\n    " if (x % max_line_width == max_line_width-1) else ",")
+            image_content += f"0x{rgb:04x}" + (",\n    " if (x % max_line_width == max_line_width-1) else ", ")
 
     if image_content.endswith("\n    "):
         image_content = image_content[:-5]

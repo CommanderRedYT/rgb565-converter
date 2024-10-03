@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='rgb565-converter',
-    version='1.3.2',
+    version='1.3.3',
     description='Convert a file from png to rgb565 (cpp) and vice versa.',
     url='https://github.com/CommanderRedYT/rgb565-converter',
     author='CommanderRedYT',
