@@ -19,5 +19,7 @@ RUN rgb565-converter -h
 # Set the entrypoint to the rgb565-converter command
 ENTRYPOINT ["rgb565-converter"]
 
+WORKDIR /data
+
 # Set the default command to run when the container starts
 CMD ["--help"]
