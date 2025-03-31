@@ -3,6 +3,10 @@ name: Docker image
 on:
   push:
 
+
+env:
+  PLATFORM: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6,linux/arm/v8
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -16,11 +20,11 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: $PLATFORM
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: $PLATFORM
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
