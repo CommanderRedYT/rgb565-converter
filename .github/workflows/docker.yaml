@@ -20,11 +20,11 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          platforms: {{ env.PLATFORMS }}
+          platforms: ${{ env.PLATFORMS }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          platforms: {{ env.PLATFORMS }}
+          platforms: ${{ env.PLATFORMS }}
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
